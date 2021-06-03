@@ -45,12 +45,15 @@ class Pawn(Piece):
         next_step_forward = Square.at(current_square.row + direction, current_square.col)
         if next_step_forward.row > 7 or next_step_forward.row < 0:
             return []
+
         diagonal_left_move = Square.at(current_square.row + direction, current_square.col-1)
         diagonal_right_move = Square.at(current_square.row + direction, current_square.col+1)
-        if board.get_piece(diagonal_left_move) and not board.get_piece(diagonal_left_move).player == self.player:
-            possible_moves += [diagonal_left_move]
-        if board.get_piece(diagonal_right_move) and not board.get_piece(diagonal_right_move).player == self.player:
-            possible_moves += [diagonal_right_move]
+        if diagonal_left_move.col >= 0: 
+            if board.get_piece(diagonal_left_move) and not board.get_piece(diagonal_left_move).player == self.player:
+                possible_moves += [diagonal_left_move]
+        if diagonal_right_move.col <= 7:
+            if board.get_piece(diagonal_right_move) and not board.get_piece(diagonal_right_move).player == self.player:
+                possible_moves += [diagonal_right_move]
 
         if board.get_piece(next_step_forward) is None:
             possible_moves += [next_step_forward]
