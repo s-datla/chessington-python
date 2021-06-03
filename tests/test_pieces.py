@@ -1,6 +1,6 @@
 from chessington.engine.board import Board
 from chessington.engine.data import Player, Square
-from chessington.engine.pieces import Pawn
+from chessington.engine.pieces import King, Pawn
 
 class TestPawns:
 
@@ -331,3 +331,63 @@ class TestPawns:
         # Assert
         assert Square.at(2, 3) not in moves
         assert Square.at(2, 5) not in moves
+
+class TestKing:
+    
+    @staticmethod
+    def test_king_can_move_orthogonally():
+        board = Board.empty()
+        king = King(Player.BLACK)
+        king_square = Square.at(3, 4)
+        board.set_piece(king_square, king)
+
+        # Act
+        moves = king.get_available_moves(board)
+
+        # Assert
+        assert Square.at(4, 4) in moves
+        assert Square.at(2, 4) in moves
+        assert Square.at(3, 5) in moves
+        assert Square.at(3, 3) in moves
+    
+    @staticmethod
+    def test_king_can_move_diagonally():
+        board = Board.empty()
+        king = King(Player.BLACK)
+        king_square = Square.at(3, 4)
+        board.set_piece(king_square, king)
+
+        # Act
+        moves = king.get_available_moves(board)
+
+        # Assert
+        assert Square.at(4, 3) in moves
+        assert Square.at(4, 5) in moves
+        assert Square.at(2, 3) in moves
+        assert Square.at(2, 5) in moves
+    
+    @staticmethod
+    def test_king_cannot_move_if_surrounded():
+        board = Board.empty()
+        king = King(Player.BLACK)
+        king_square = Square.at(3, 4)
+        board.set_piece(king_square, king)
+        directions = {
+            'left': {'row':0, 'col':-1},
+            'right': {'row':0, 'col':+1},
+            'up': {'row':+1, 'col':0},
+            'down': {'row':-1, 'col':0},
+            'diag-up-left': {'row':+1, 'col':-1},
+            'diag-up-right': {'row':+1, 'col':+1},
+            'diag-down-left': {'row':-1, 'col':-1},
+            'down-down-right': {'row':-1, 'col':+1},
+        }
+
+        for direction in directions.values():
+            board.set_piece(Square.at(king_square.row + direction['row'], king_square.col + direction['col']), Pawn(Player.BLACK))
+
+        # Act
+        moves = king.get_available_moves(board)
+
+        # Assert
+        assert len(moves) == 0
